@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD286xsH686PV110183viRxLWUEy87yYBY",
-    authDomain: "bow-space-3b810.firebaseapp.com",
-    projectId: "bow-space-3b810",
-    storageBucket: "bow-space-3b810.appspot.com",
-    messagingSenderId: "1036416873492",
-    appId: "1:1036416873492:web:cec16e81f69c146b8ea301"  
-};  
+    apiKey: "AIzaSyBcUZ5SNmIHLf6oIxPfDfyR8jLYOtLNnSs",
+    authDomain: "bow-space-app.firebaseapp.com",
+    projectId: "bow-space-app",
+    storageBucket: "bow-space-app.appspot.com",
+    messagingSenderId: "288363952709",
+    appId: "1:288363952709:web:af126d038258637de2012c"  
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

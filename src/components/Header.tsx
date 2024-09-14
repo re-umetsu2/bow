@@ -20,7 +20,7 @@ export default function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userProfile, setUserProfile] = useState<{ username?: string; iconUrl?: string }>({});
+  const [userProfile, setUserProfile] = useState<{ username?: string; iconUrl?: string; userID?: string }>({});
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -29,7 +29,7 @@ export default function Header() {
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setUserProfile(docSnap.data() as { username?: string; iconUrl?: string });
+          setUserProfile(docSnap.data() as { username?: string; iconUrl?: string; userID?: string });
         }
       }
     });
@@ -82,18 +82,18 @@ export default function Header() {
             <div className="relative ml-2.5">
               <div className="cursor-pointer" onClick={toggleUserMenu}>
                 {userProfile.iconUrl ? (
-                  <div className="w-[32px]">
-                    <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="rounded-full w-full" />
-                  </div>                
+                    <div className="w-[36px] border rounded-full overflow-hidden">
+                      <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
+                    </div>             
                   ) : (
-                  <div className="bg-slate-200 rounded-full p-2.5">
-                    <FaUser className="text-slate-400" />
-                  </div>
+                    <div className="bg-slate-200 rounded-full p-2.5">
+                      <FaUser className="text-slate-400" />
+                    </div>
                 )}
               </div>
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg py-2">
-                  <Link href="/account" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
+                  <Link href={`/users/${userProfile.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
                     {userProfile.username || "My Account"}
                   </Link>
                   <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
@@ -125,8 +125,8 @@ export default function Header() {
               <div className="relative">
               <div className="cursor-pointer" onClick={toggleUserMenu}>
                 {userProfile.iconUrl ? (
-                  <div className="w-[32px]">
-                    <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="rounded-full w-full" />
+                  <div className="w-[36px] border rounded-full overflow-hidden">
+                    <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
                   </div>
                 ) : (
                   <div className="bg-slate-200 rounded-full p-2.5">
@@ -136,7 +136,7 @@ export default function Header() {
               </div>
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2.5 w-40 bg-white border rounded-lg shadow-lg py-2">
-                    <Link href="/account" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
+                    <Link href={`/users/${userProfile.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
                       {userProfile.username || "My Account"}
                     </Link>
                     <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
