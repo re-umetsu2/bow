@@ -12,7 +12,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { FiSearch, FiX } from "react-icons/fi";
-import { FaUser, FaGoogle } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -20,7 +20,7 @@ export default function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userProfile, setUserProfile] = useState<{ username?: string; iconUrl?: string; userID?: string }>({});
+  const [userProfile, setUserProfile] = useState<{ username?: string; iconUrl?: string; userID?: string } | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -30,6 +30,8 @@ export default function Header() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserProfile(docSnap.data() as { username?: string; iconUrl?: string; userID?: string });
+        } else {
+          setUserProfile(null); // データが存在しない場合はnullに設定
         }
       }
     });
@@ -76,93 +78,59 @@ export default function Header() {
         <Link href="/" className="w-10">
           <Image src="/logo.svg" alt="Bow" width={100} height={100} />
         </Link>
-        <div className="flex lg:hidden items-center ml-auto">
-          <Link href="/search"><FiSearch className="opacity-50" /></Link>
-          {user ? (
-            <div className="relative ml-2.5">
-              <div className="cursor-pointer" onClick={toggleUserMenu}>
-                {userProfile.iconUrl ? (
-                    <div className="w-[36px] border rounded-full overflow-hidden">
-                      <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
-                    </div>             
-                  ) : (
-                    <div className="bg-slate-200 rounded-full p-2.5">
-                      <FaUser className="text-slate-400" />
-                    </div>
-                )}
-              </div>
-              {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg py-2">
-                  <Link href={`/users/${userProfile.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
-                    {userProfile.username || "My Account"}
-                  </Link>
-                  <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
-                  <button 
-                    onClick={handleLogout} 
-                    className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button
-              className="border bg-white rounded-full px-1.5 py-0.5 ml-2.5"
-              onClick={openLoginModal}
-            >
-              Log In
-            </button>
-          )}
-        </div>
-        <div className="hidden lg:flex ml-auto">
-          <div className="flex items-center bg-white rounded-full overflow-hidden px-1.5 py-0.5 mr-5">
+        <div className="flex ml-auto items-center">
+          <Link href="/search" className="block md:hidden mr-2.5"><FiSearch className="opacity-50" /></Link>
+          <div className="md:flex items-center bg-white rounded-full overflow-hidden px-1.5 py-0.5 mr-5 hidden">
             <FiSearch className="opacity-50" />
             <input placeholder="Search" className="outline-none ml-2.5" />
           </div>
           <div className="flex space-x-2.5">
-            {user ? (
-              <div className="relative">
-              <div className="cursor-pointer" onClick={toggleUserMenu}>
-                {userProfile.iconUrl ? (
-                  <div className="w-[36px] border rounded-full overflow-hidden">
-                    <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
+            {userProfile ? (
+              <>
+                {user ? (
+                  <div className="relative">
+                    <div className="cursor-pointer" onClick={toggleUserMenu}>
+                      {userProfile.iconUrl ? (
+                        <div className="w-[36px] border rounded-full overflow-hidden">
+                          <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
+                        </div>
+                      ) : (
+                        <div className="bg-slate-200 rounded-full w-[36px] h-[36px]" />
+                      )}
+                    </div>
+                    {isUserMenuOpen && (
+                      <div className="absolute right-0 mt-2.5 w-40 bg-white border rounded-lg shadow-lg py-2">
+                        <Link href={`/users/${userProfile.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
+                          {userProfile.username || "My Account"}
+                        </Link>
+                        <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
+                        <button 
+                          onClick={handleLogout} 
+                          className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="bg-slate-200 rounded-full p-2.5">
-                    <FaUser className="text-slate-400" />
-                  </div>
-                )}
-              </div>
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2.5 w-40 bg-white border rounded-lg shadow-lg py-2">
-                    <Link href={`/users/${userProfile.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
-                      {userProfile.username || "My Account"}
-                    </Link>
-                    <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
-                    <button 
-                      onClick={handleLogout} 
-                      className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+                  <>
+                    <button
+                      className="border bg-white rounded-full px-1.5 py-0.5"
+                      onClick={openLoginModal}
                     >
-                      Logout
+                      Log In
                     </button>
-                  </div>
+                    <Link href="/init">
+                      <button className="border border-black bg-black text-white rounded-full px-1.5 py-0.5">
+                        Sign Up
+                      </button>
+                    </Link>
+                  </>
                 )}
-              </div>
-            ) : (
-              <>
-                <button
-                  className="border bg-white rounded-full px-1.5 py-0.5"
-                  onClick={openLoginModal}
-                >
-                  Log In
-                </button>
-                <Link href="/init">
-                  <button className="border border-black bg-black text-white rounded-full px-1.5 py-0.5">
-                    Sign Up
-                  </button>
-                </Link>
               </>
+            ) : (
+              <div className="bg-slate-200 rounded-full w-[36px] h-[36px]" />
             )}
           </div>
         </div>

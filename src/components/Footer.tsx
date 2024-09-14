@@ -11,14 +11,14 @@ export default function Footer() {
             <p className="mt-2.5">&copy; 2024 umetsu.</p>
             </div>
             <div className="flex flex-col space-y-2.5">
-                <Link href="#">Terms of Service</Link>
-                <Link href="#">Privacy Policy</Link>
-                <Link href="#">FAQ</Link>
+                <Link href="#" className="outline-none focus:underline">Terms of Service</Link>
+                <Link href="#" className="outline-none focus:underline">Privacy Policy</Link>
+                <Link href="#" className="outline-none focus:underline">FAQ</Link>
             </div>
             <div className="flex flex-col space-y-2.5">
-                <Link href="#">About</Link>
-                <Link href="#">Blog</Link>
-                <Link href="#">Contact</Link>
+                <Link href="#" className="outline-none focus:underline">About</Link>
+                <Link href="#" className="outline-none focus:underline">Blog</Link>
+                <Link href="#" className="outline-none focus:underline">Contact</Link>
             </div>
         </div>
     )
