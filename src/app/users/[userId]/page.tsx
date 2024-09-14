@@ -59,9 +59,10 @@ export default function UserPage({ params }: { params: { userId: string } }) {
         {!user && (
           <div className="mt-12">
             <div className="flex flex-col md:flex-row md:items-center">
-                <div className="w-[94px] h-[94px] rounded-full overflow-hidden">
+                <div className="w-[94px] h-[94px] rounded-full overflow-hidden block md:hidden">
                   <div className="bg-slate-200 w-[94px] h-[94px]" />
                 </div>
+                <div className="bg-slate-200 rounded-full p-10 md:bloc-k" />
                 <div className="w-full flex items-center mt-5 md:mt-0 md:ml-5">
                     <div className="mr-5">
                         <div className="bg-slate-200 rounded w-20 h-[32px] mb-[4px]" />

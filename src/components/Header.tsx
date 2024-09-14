@@ -12,7 +12,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { FiSearch, FiX } from "react-icons/fi";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaUser } from "react-icons/fa";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,25 +24,32 @@ export default function Header() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
       if (currentUser) {
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserProfile(docSnap.data() as { username?: string; iconUrl?: string; userID?: string });
-        } else {
-          setUserProfile(null); // データが存在しない場合はnullに設定
+        setUser(currentUser);
+
+        if (!userProfile) {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserProfile(docSnap.data() as { username?: string; iconUrl?: string; userID?: string });
+          } else {
+            setUserProfile(null); // データが存在しない場合はnullに設定
+          }
         }
+      } else {
+        setUser(null);
+        setUserProfile(null);
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]); // 依存配列に user を追加
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
       setIsUserMenuOpen(false);
+      setUserProfile(null); // ログアウト時にプロフィールをクリア
     } catch (error) {
       console.error(error);
     }
@@ -75,7 +82,7 @@ export default function Header() {
   return (
     <>
       <div className="z-50 sticky top-10 left-0 bg-white bg-opacity-50 backdrop-blur border rounded-2xl shadow px-3.5 py-2.5 flex items-center">
-        <Link href="/" className="w-10">
+        <Link href="/" className="w-10 outline-none focus:opacity-50">
           <Image src="/logo.svg" alt="Bow" width={100} height={100} />
         </Link>
         <div className="flex ml-auto items-center">
@@ -85,57 +92,52 @@ export default function Header() {
             <input placeholder="Search" className="outline-none ml-2.5" />
           </div>
           <div className="flex space-x-2.5">
-            {userProfile ? (
-              <>
-                {user ? (
-                  <div className="relative">
-                    <div className="cursor-pointer" onClick={toggleUserMenu}>
-                      {userProfile.iconUrl ? (
-                        <div className="w-[36px] border rounded-full overflow-hidden">
-                          <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
-                        </div>
-                      ) : (
-                        <div className="bg-slate-200 rounded-full w-[36px] h-[36px]" />
-                      )}
+            {user ? (
+              <div className="relative">
+                <div className="cursor-pointer" onClick={toggleUserMenu}>
+                  {userProfile?.iconUrl ? (
+                    <div className="w-[36px] border rounded-full overflow-hidden">
+                      <Image src={userProfile.iconUrl} alt="User Icon" width={100} height={100} className="w-full" />
                     </div>
-                    {isUserMenuOpen && (
-                      <div className="absolute right-0 mt-2.5 w-40 bg-white border rounded-lg shadow-lg py-2">
-                        <Link href={`/users/${userProfile.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
-                          {userProfile.username || "My Account"}
-                        </Link>
-                        <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
-                        <button 
-                          onClick={handleLogout} 
-                          className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      className="border bg-white rounded-full px-1.5 py-0.5"
-                      onClick={openLoginModal}
-                    >
-                      Log In
-                    </button>
-                    <Link href="/init">
-                      <button className="border border-black bg-black text-white rounded-full px-1.5 py-0.5">
-                        Sign Up
-                      </button>
+                  ) : (
+                    <div className="bg-slate-200 text-slate-400 rounded-full w-[36px] h-[36px] flex items-center justify-center">
+                      <FaUser />
+                    </div>
+                  )}
+                </div>
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2.5 w-40 bg-white border rounded-lg shadow-lg py-2">
+                    <Link href={`/users/${userProfile?.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
+                      {userProfile?.username || "My Account"}
                     </Link>
-                  </>
+                    <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
+                    <button 
+                      onClick={handleLogout} 
+                      className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 )}
-              </>
+              </div>
             ) : (
-              <div className="bg-slate-200 rounded-full w-[36px] h-[36px]" />
+              <>
+                <button
+                  className="border bg-white rounded-full px-1.5 py-0.5"
+                  onClick={openLoginModal}
+                >
+                  Log In
+                </button>
+                <Link href="/init">
+                  <button className="border border-black bg-black text-white rounded-full px-1.5 py-0.5">
+                    Sign Up
+                  </button>
+                </Link>
+              </>
             )}
           </div>
         </div>
       </div>
-
       {/* Login Modal */}
       {isLoginModalOpen && (
         <div className="z-50 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
