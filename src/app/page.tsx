@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import Button from "@/components/Button";
 
 export default function Home() {
   return (
@@ -11,8 +12,8 @@ export default function Home() {
       <Header />
       <div className="mt-12 flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2">
-          <h1 className="text-2xl">Capture the Moment, Make It Yours!</h1>
-          <Link href="/init" passHref><button className="border border-black bg-black text-white rounded-full px-3.5 py-2.5 mt-5 italic flex items-center">Getting Started<FiArrowRight className="ml-0.5" /></button></Link>
+          <h1 className="text-2xl mb-5">Capture the Moment, Make It Yours!</h1>
+          <Link href="/init" passHref><Button size="lg" className="italic flex items-center" rightIcon={<FiArrowRight />}>Getting Started</Button></Link>
         </div>
         <div className="w-full lg:w-1/2 select-none">
           <Image src="/d/coffe_call.svg" alt="Illustration" width={100} height={100} className="w-full" />

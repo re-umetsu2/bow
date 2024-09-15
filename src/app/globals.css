@@ -26,3 +26,39 @@ button:focus-visible {
   outline: none;
   box-shadow: 0px 0px 0px 2.5px rgba(0, 123, 255, .5);
 }
+
+.link-focus {
+  transition: box-shadow .5s;
+}
+.link-focus:focus-visible {
+  outline: none;
+  box-shadow: 0px 0px 0px 2.5px rgba(0, 123, 255, .5);
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}

@@ -12,7 +12,8 @@ import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { FiSearch, FiX } from "react-icons/fi";
-import { FaGoogle, FaUser } from "react-icons/fa";
+import { FaGoogle, FaPlus, FaUser } from "react-icons/fa";
+import Button from "./Button";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -107,10 +108,11 @@ export default function Header() {
                 </div>
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2.5 w-40 bg-white border rounded-lg shadow-lg py-2">
-                    <Link href={`/users/${userProfile?.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200">
+                    <Link href="/editor" className="px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center link-focus border-b"><FaPlus className="mr-2" />Create Post</Link>
+                    <Link href={`/users/${userProfile?.userID}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 link-focus">
                       {userProfile?.username || "My Account"}
                     </Link>
-                    <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</Link>
+                    <Link href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-200 link-focus">Settings</Link>
                     <button 
                       onClick={handleLogout} 
                       className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
@@ -122,16 +124,17 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <button
-                  className="border bg-white rounded-full px-1.5 py-0.5"
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={openLoginModal}
                 >
                   Log In
-                </button>
+                </Button>
                 <Link href="/init">
-                  <button className="border border-black bg-black text-white rounded-full px-1.5 py-0.5">
+                  <Button size="sm">
                     Sign Up
-                  </button>
+                  </Button>
                 </Link>
               </>
             )}
@@ -168,21 +171,12 @@ export default function Header() {
                 />
               </div>
               <div className="space-y-2.5">
-                <button
-                  type="button"
-                  onClick={handleEmailLogin}
-                  className="w-full bg-black text-white border border-black rounded-full py-2 px-4"
-                >
+                <Button onClick={handleEmailLogin} className="w-full">
                   Log In
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  className="w-full bg-white border rounded-full py-2 px-4 flex items-center justify-center"
-                >
-                  <FaGoogle className="mr-2" />
+                </Button>
+                <Button onClick={handleGoogleLogin} className="w-full flex items-center justify-center" variant="secondary" leftIcon={<FaGoogle />}>
                   Log In with Google
-                </button>
+                </Button>
               </div>
             </form>
           </div>

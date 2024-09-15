@@ -6,6 +6,9 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { FaGoogle } from "react-icons/fa";
+import Button from "@/components/Button";
+import Image from "next/image";
+import Footer from "@/components/Footer";
 
 // Step1 component props type
 interface Step1Props {
@@ -53,6 +56,9 @@ function Step1({ onNext, userID, setUserID, username, setUsername, setError }: S
 
   return (
     <div>
+      <div className="flex justify-center mb-5">
+        <Image src="/d/dog_call.svg" alt="" width={100} height={100} className="w-60" />
+      </div>
       <h2 className="text-2xl mb-5">Step 1: Set UserID and Username</h2>
       <div className="space-y-5">
         <div>
@@ -77,12 +83,12 @@ function Step1({ onNext, userID, setUserID, username, setUsername, setError }: S
             className="mt-1.5 block w-full border rounded shadow-sm py-2 px-4 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        <button
+        <Button
           onClick={handleNext}
-          className="w-full rounded-full py-2 px-4 bg-black border-black text-white"
+          className="w-full"
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -158,25 +164,15 @@ function Step2({ userID, username, onPrevious }: Step2Props) {
             className="mt-1.5 block w-full border rounded shadow-sm py-2 px-4 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        <button
-          onClick={handleEmailSignUp}
-          className="w-full rounded-full py-2 px-4 bg-black border-black text-white"
-        >
+        <Button onClick={handleEmailSignUp} className="w-full">
           Sign Up
-        </button>
-        <button
-          onClick={handleGoogleSignUp}
-          className="w-full rounded-full py-2 px-4 border flex items-center justify-center"
-        >
-          <FaGoogle className="mr-2" />
+        </Button>
+        <Button onClick={handleGoogleSignUp} variant="secondary" className="w-full flex items-center justify-center" leftIcon={<FaGoogle />}>
           Sign Up with Google
-        </button>
-        <button
-          onClick={onPrevious}
-          className="w-full rounded-full py-2 px-4 border"
-        >
+        </Button>
+        <Button onClick={onPrevious} variant="secondary" className="w-full">
           Back
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -210,6 +206,7 @@ export default function Init() {
           />
         )}
       </div>
+      <Footer />
     </div>
   );
 }
