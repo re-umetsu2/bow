@@ -82,7 +82,7 @@ export default function Header() {
   return (
     <>
       <div className="z-50 sticky top-10 left-0 bg-white bg-opacity-50 backdrop-blur border rounded-2xl shadow px-3.5 py-2.5 flex items-center">
-        <Link href="/" className="w-10 outline-none focus:opacity-50">
+        <Link href="/" className="w-10">
           <Image src="/logo.svg" alt="Bow" width={100} height={100} />
         </Link>
         <div className="flex ml-auto items-center">

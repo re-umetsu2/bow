@@ -13,6 +13,7 @@ interface User {
   username: string;
   iconUrl: string;
   userID: string;
+  bio: string; // Added bio field
 }
 
 export default function UserPage({ params }: { params: { userId: string } }) {
@@ -93,7 +94,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
                 <div className="w-full flex items-center mt-5 md:mt-0 md:ml-5">
                     <div className="mr-5">
                         <h1 className="text-2xl mb-[4px]">{user.username}</h1>
-                        <p className="text-sm opacity-75">こんにちは。Bowを作った人です。</p>
+                        <p className="text-sm opacity-75">{user.bio}</p> {/* Display user bio */}
                     </div>
                     <div className="ml-auto">
                         {isCurrentUser ? (
