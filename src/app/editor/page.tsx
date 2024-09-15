@@ -178,7 +178,7 @@ export default function Editor() {
                 <div className="border rounded">
                     <div className="p-2.5 flex">
                         {image ? (
-                            <img src={image} alt="Uploaded" className="w-64 h-64 rounded" style={imageStyle} />
+                            <img src={image} alt="Uploaded" className="w-64 rounded" style={imageStyle} />
                         ) : (
                             <div className="bg-slate-200 w-64 h-64 rounded" />
                         )}

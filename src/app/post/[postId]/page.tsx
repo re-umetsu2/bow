@@ -1,12 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import { doc, getDoc, query, where, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, query, where, collection, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
+import { ref, deleteObject } from "firebase/storage"; // Storageから画像を削除するために必要
+import { storage } from "@/lib/firebaseConfig"; // Firebase Storageのインスタンス
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Image from "next/image";
 import Link from "next/link";
 import Skeleton from "@/components/Skeleton";
+import Button from "@/components/Button";
 
 interface User {
   username: string;
@@ -88,6 +91,27 @@ export default function PostPage({ params }: { params: { postId: string } }) {
     `,
   });
 
+  const handleDelete = async () => {
+    if (post && user) {
+      try {
+        // Storageから画像を削除
+        const imageRef = ref(storage, post.imageUrl);
+        await deleteObject(imageRef);
+
+        // Firestoreから投稿データを削除
+        const postDocRef = doc(db, "posts", postId);
+        await deleteDoc(postDocRef);
+
+        alert("The post has been deleted.");
+      } catch (error) {
+        console.error("Error deleting post: ", error);
+        alert("An error occurred while deleting the post.");
+      }
+    } else {
+      alert("Poster information not found.");
+    }
+  };
+
   return (
     <div className="md:w-1/2 mx-5 md:mx-auto my-10">
       <Header />
@@ -114,6 +138,15 @@ export default function PostPage({ params }: { params: { postId: string } }) {
                   <p className="text-sm opacity-75">{user.bio}</p>
                 </div>
               </div>
+              {user.userID === post?.userID && (
+                <Button
+                  onClick={handleDelete}
+                  size="sm"
+                  className="mt-5 bg-white text-[#EF4444] border border-red-500"
+                >
+                  Delete Post
+                </Button>
+              )}
             </div>
           ) : (
             <div>
