@@ -62,3 +62,9 @@ button:focus-visible {
   border-radius: 50%;
   cursor: pointer;
 }
+
+.danger-button {
+  background-color: #fff;
+  color: #EF4444 !important;
+  border-color: #EF4444 !important;
+}

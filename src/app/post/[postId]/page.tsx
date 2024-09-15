@@ -142,7 +142,7 @@ export default function PostPage({ params }: { params: { postId: string } }) {
                 <Button
                   onClick={handleDelete}
                   size="sm"
-                  className="mt-5 bg-white text-[#EF4444] border border-red-500"
+                  className="mt-5 border danger-button"
                 >
                   Delete Post
                 </Button>
