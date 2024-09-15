@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, query, where, collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Image from "next/image";
+import Link from "next/link";
+import Skeleton from "@/components/Skeleton";
 
 interface User {
   username: string;
@@ -26,7 +28,11 @@ export default function PostPage({ params }: { params: { postId: string } }) {
   const { postId } = params;
   const [post, setPost] = useState<Post | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [invert, setInvert] = useState(0);
+  const [sepia, setSepia] = useState(0);
 
   useEffect(() => {
     const fetchPostData = async () => {
@@ -39,13 +45,22 @@ export default function PostPage({ params }: { params: { postId: string } }) {
           const postData = postDoc.data() as Post;
           setPost(postData);
 
-          // ユーザーデータを無理やり取得
-          try {
-            const userDocRef = doc(db, "users", postData.userID);
-            const userDoc = await getDoc(userDocRef);
+          // 初期フィルター値をセット
+          setBrightness(postData.brightness);
+          setContrast(postData.contrast);
+          setInvert(postData.invert);
+          setSepia(postData.sepia);
 
-            if (userDoc.exists()) {
-              const userData = userDoc.data() as User;
+          // ユーザーデータを取得
+          try {
+            const userQuery = query(
+              collection(db, "users"),
+              where("userID", "==", postData.userID)
+            );
+            const userQuerySnapshot = await getDocs(userQuery);
+
+            if (!userQuerySnapshot.empty) {
+              const userData = userQuerySnapshot.docs[0].data() as User;
               setUser(userData);
             } else {
               console.warn("User not found");
@@ -58,8 +73,6 @@ export default function PostPage({ params }: { params: { postId: string } }) {
         }
       } catch (error) {
         console.error("Error fetching post data: ", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -68,16 +81,12 @@ export default function PostPage({ params }: { params: { postId: string } }) {
 
   const applyFilterStyle = () => ({
     filter: `
-      brightness(${post?.brightness}%)
-      contrast(${post?.contrast}%)
-      invert(${post?.invert})
-      sepia(${post?.sepia})
+      brightness(${brightness}%)
+      contrast(${contrast}%)
+      invert(${invert})
+      sepia(${sepia})
     `,
   });
-
-  if (isLoading) {
-    return <div>Loading...</div>; // ローディングインジケーター
-  }
 
   return (
     <div className="md:w-1/2 mx-5 md:mx-auto my-10">
@@ -86,32 +95,90 @@ export default function PostPage({ params }: { params: { postId: string } }) {
         {post ? (
           <img
             src={post.imageUrl}
-            className="w-full rounded"
+            className="w-full border rounded"
             alt="Post Image"
             style={applyFilterStyle()}
           />
         ) : (
-          <p>Post not found</p>
+          <Skeleton className="w-full" />
         )}
-        {user ? (
-        <div className="mt-5">
-          <div className="flex items-center">
-            <Image
-              src={user.iconUrl}
-              alt={`${user.username}'s icon`}
-              width={50}
-              height={50}
-              className="rounded-full"
-            />
-            <div className="ml-3">
-              <h2 className="text-lg font-bold">{user.username}</h2>
-              <p className="text-sm opacity-75">{user.bio}</p>
+        <div>
+          {user ? (
+            <div>
+              <div className="flex items-center">
+                <Link href={`/users/${user.userID}`} className="w-12 border rounded-full overflow-hidden link-focus" passHref>
+                  <Image src={user.iconUrl} alt={`${user.username}'s icon`} width={100} height={100} className="w-full" />
+                </Link>
+                <div className="ml-2.5 flex flex-col">
+                  <Link href={`/users/${user.userID}`} className="text-lg link-focus" passHref>{user.username}</Link>
+                  <p className="text-sm opacity-75">{user.bio}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center">
+                <Skeleton className="w-12" rounded="full" />
+                <div className="ml-2.5 flex flex-col">
+                  <Skeleton className="w-20 h-[24px] mb-[4px]" />
+                  <Skeleton className="w-40 h-[16px]" />
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="mt-5 p-2.5 border rounded space-y-2.5">
+            <div>
+              <p>Brightness</p>
+              <input 
+                type="range" 
+                className="slider" 
+                min="0" 
+                max="200" 
+                step="1" 
+                value={brightness} 
+                onChange={(e) => setBrightness(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <p>Contrast</p>
+              <input 
+                type="range" 
+                className="slider" 
+                min="0" 
+                max="200" 
+                step="1" 
+                value={contrast} 
+                onChange={(e) => setContrast(Number(e.target.value))}
+              />
+            </div>
+          </div>
+          <div className="mt-5 p-2.5 border rounded space-y-2.5">
+            <div>
+              <p>Invert</p>
+              <input 
+                type="range" 
+                className="slider" 
+                min="0" 
+                max="1" 
+                step="1" 
+                value={invert} 
+                onChange={(e) => setInvert(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <p>Sepia</p>
+              <input 
+                type="range" 
+                className="slider" 
+                min="0" 
+                max="1" 
+                step="1" 
+                value={sepia} 
+                onChange={(e) => setSepia(Number(e.target.value))}
+              />
             </div>
           </div>
         </div>
-      ) : (
-        <p>User information not available</p>
-      )}
       </div>
       <Footer />
     </div>
